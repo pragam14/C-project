@@ -1,0 +1,88 @@
+#include <iostream>
+using namespace std;
+
+char board[3][3] = {
+    {'1','2','3'},
+    {'4','5','6'},
+    {'7','8','9'}
+};
+
+char current_marker;
+int current_player;
+
+void drawBoard() {
+    cout << "\n";
+    for (int i = 0; i < 3; i++) {
+        cout << " ";
+        for (int j = 0; j < 3; j++) {
+            cout << board[i][j];
+            if (j < 2) cout << " | ";
+        }
+        cout << "\n";
+        if (i < 2) cout << "---|---|---\n";
+    }
+    cout << "\n";
+}
+
+bool placeMarker(int cell) {
+    int row = (cell - 1) / 3;
+    int col = (cell - 1) % 3;
+
+    if (cell < 1 || cell > 9) return false;
+    if (board[row][col] != 'X' && board[row][col] != 'O') {
+        board[row][col] = current_marker;
+        return true;
+    }
+    return false;
+}
+
+char checkWinner() {
+    for (int i = 0; i < 3; i++) {
+        if (board[i][0]==board[i][1] && board[i][1]==board[i][2])
+            return board[i][0];
+        if (board[0][i]==board[1][i] && board[1][i]==board[2][i])
+            return board[0][i];
+    }
+
+    if (board[0][0]==board[1][1] && board[1][1]==board[2][2])
+        return board[0][0];
+    if (board[0][2]==board[1][1] && board[1][1]==board[2][0])
+        return board[0][2];
+
+    return ' ';
+}
+
+void playGame() {
+    int cell;
+    drawBoard();
+
+    for (int turn = 0; turn < 9; turn++) {
+        current_player = (turn % 2) + 1;
+        current_marker = (current_player == 1) ? 'X' : 'O';
+
+        cout << "Player " << current_player << " (" << current_marker << "), choose cell (1-9): ";
+        cin >> cell;
+
+        if (!placeMarker(cell)) {
+            cout << "Invalid move. Try again.\n";
+            turn--;
+            continue;
+        }
+
+        drawBoard();
+
+        char winner = checkWinner();
+        if (winner == 'X' || winner == 'O') {
+            cout << "Player " << current_player << " wins!\n";
+            return;
+        }
+    }
+
+    cout << "It's a draw!\n";
+}
+
+int main() {
+    cout << "Tic Tac Toe Game (2 Player)\n";
+    playGame();
+    return 0;
+}
